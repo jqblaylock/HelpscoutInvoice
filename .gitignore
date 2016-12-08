@@ -5,6 +5,7 @@ client/npm-debug.*
 client/link-checker-results.txt
 client/app/**/*.js
 client/*.js.map
+client/app/*.js.map
 client/e2e/**/*.js
 client/e2e/**/*.js.map
 client/_test-output

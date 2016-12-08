@@ -1,4 +1,4 @@
-import { Component, OnInit, Pipe } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { HelpscoutService } from './helpscout.service';
 import { Observable } from 'rxjs/Rx';
@@ -13,8 +13,11 @@ export class AppComponent implements OnInit {
     startDate: string = this.date.getFullYear() + '-' + this.date.getMonth() + '-01';
     endDate: string = this.date.getFullYear() + '-' + (this.date.getMonth()+1) + '-01';
     errorMessage: string;
-    hsData: any;
-    responseJSON: any;
+    page: number
+    pages: number
+    count: number
+    conversations: any[];
+
 
     constructor(private _helpscout: HelpscoutService) { }
 
@@ -22,26 +25,30 @@ export class AppComponent implements OnInit {
         console.log(this.startDate.toString())
     }
 
-    connectToHelpscout(startDate: string, endDate: string): void {
-        let startDateISO = new Date(startDate).toISOString();
-        let endDateISO = new Date(endDate).toISOString();
-        console.log('Connect to Helpscout for the following Dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
-
-        this._helpscout.getHelpscout(startDateISO, endDateISO)
+    getConversationsByDate(startDate: string, endDate: string): void {
+        console.log('Get Helpscout conversations closed for the following dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
+        this.count = 0;
+        this._helpscout.searchConversationsByDate(startDate, endDate)
             .subscribe(
-                data => this.hsData = data,
+                data => {
+                    this.count = data.count;
+                    this.pages = data.pages;
+                    this.conversations = data.items;
+                },
                 error => this.errorMessage = <any>error
         );
     }
 
-    runExpressTest (startDate: string, endDate: string): void {
-        let startDateISO = new Date(startDate).toISOString();
-        let endDateISO = new Date(endDate).toISOString();
 
-        this._helpscout.expressTest({start: startDateISO, end: endDateISO})
-            .subscribe(
-                data => this.responseJSON = data
-            )
-    }
+
+    // runExpressTest (startDate: string, endDate: string): void {
+    //     let startDateISO = new Date(startDate).toISOString();
+    //     let endDateISO = new Date(endDate).toISOString();
+
+    //     this._helpscout.expressTest({start: startDateISO, end: endDateISO})
+    //         .subscribe(
+    //             data => this.responseJSON = data
+    //         )
+    // }
 
 }

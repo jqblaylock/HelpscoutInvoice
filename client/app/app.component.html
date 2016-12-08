@@ -10,19 +10,20 @@
                 <label for="endDate">End Date</label>
                 <input type="date" name="endDate" id="endDate" [(ngModel)]="endDate" required>
             </div>
-            <button type="submit" class="btn btn-default" (click)="runExpressTest(startDate, endDate)">Submit</button>
+            <button type="submit" class="btn btn-default" (click)="getConversationsByDate(startDate, endDate)">Submit</button>
         </form>
     </div>
     <p *ngIf="startDate && endDate">Query HelpScout conversations from {{startDate | date:"MM/dd/yyyy"}} to {{endDate | date:"MM/dd/yyyy"}}.</p>
 </div>
-<!--<div class="container-fluid" *ngIf="hsData">
-    <h2>Helpscout Data</h2>
-    <div>There are {{ hsData.pages }} pages of results and a total of {{ hsData.count }} tickets for your search.</div>
-    <ul>
-        <li *ngFor="let hs of hsData.items">#{{ hs.number }} - {{ hs.subject }}</li>
-    </ul>
-</div>-->
 
-<div *ngIf="responseJSON">
-    {{ responseJSON }}
+<div *ngIf="count && pages">
+    <h2>The search returned {{ count }} results over {{ pages }} pages.</h2>
 </div>
+
+<div class="container-fluid" *ngIf="conversations">
+    <h3>Conversation IDs</h3>
+    <ul>
+        <li *ngFor="let c of conversations">#{{ c.number }}</li>
+    </ul>
+</div>
+

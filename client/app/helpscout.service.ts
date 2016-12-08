@@ -7,10 +7,12 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class HelpscoutService {
+
     private _helpscoutUrl: string = 'https://api.helpscout.net/v1/';
-    private _pages: string;
+    private _apiKey: string = 'ODM4ZjZkZTJhMzRkMTdlMWM0MzA0ODZiNzMyZTI1YTc0YTU1YmFkNTpY';
+
     headers: Headers = new Headers({
-        "Authorization": "Basic ODM4ZjZkZTJhMzRkMTdlMWM0MzA0ODZiNzMyZTI1YTc0YTU1YmFkNTpY"
+        "Authorization": "Basic " + this._apiKey
     });
     options: RequestOptions = new RequestOptions({
         headers: this.headers
@@ -18,23 +20,26 @@ export class HelpscoutService {
 
     constructor(private _http: Http) {
 
-     }
-
-    getHelpscout (startDate: string, endDate: string) {
-        let path = 'search/conversations.json?query=(status:"closed"%20AND%20mailboxid:79656%20AND%20' +
-                         'modifiedAt:['+startDate+'%20TO%20'+endDate+'])&page=1';
-        let fullUrl = this._helpscoutUrl + path;
-        console.log(fullUrl);
-        return this._http.get(fullUrl, this.options)
-            .map((resp: Response) => resp.json())
-            .catch(this.handleError)
     }
 
-    getPages (startDate: string, endDate: string) {
-        let path = 'search/conversations.json?query=(status:"closed"%20AND%20mailboxid:79656%20AND%20' +
-                         'modifiedAt:['+startDate+'%20TO%20'+endDate+'])&page=1';
-        let fullUrl = this._helpscoutUrl + path;
-        return this._http.get(fullUrl, this.options)
+    searchConversationsByDate (startDate: string, endDate: string, page?: number): Observable<any> {
+        startDate = new Date(startDate).toISOString();
+        endDate = new Date(endDate).toISOString();
+        let url = this._helpscoutUrl + 'search/conversations.json?query=(status:"closed"%20AND%20mailboxid:79656%20AND%20' +
+                         'modifiedAt:['+startDate+'%20TO%20'+endDate+'])';
+        if(page){
+            url = url + '&page=' + page;
+        }
+        return this.runSearch(url);
+    }
+
+    searchThreadById (id: number): Observable<any> {
+        let url = 'conversations/'+id+'.json';
+        return this.runSearch(url);
+    }
+
+    runSearch (url: string) {
+        return this._http.get(url, this.options)
             .map((resp: Response) => resp.json())
             .catch(this.handleError)
     }
