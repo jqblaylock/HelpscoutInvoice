@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
     page: number
     pages: number
     count: number
-    conversations: any[];
+    conversations: any[] = [];
 
 
     constructor(private _helpscout: HelpscoutService) { }
@@ -25,18 +25,31 @@ export class AppComponent implements OnInit {
         console.log(this.startDate.toString())
     }
 
-    getConversationsByDate(startDate: string, endDate: string): void {
+    getConvByDate(startDate: string, endDate: string): void {
+        this.startDate = startDate;
+        this.endDate = endDate
         console.log('Get Helpscout conversations closed for the following dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
         this.count = 0;
-        this._helpscout.searchConversationsByDate(startDate, endDate)
+        this._helpscout.searchConvByDate(startDate, endDate)
             .subscribe(
                 data => {
                     this.count = data.count;
                     this.pages = data.pages;
-                    this.conversations = data.items;
                 },
                 error => this.errorMessage = <any>error
         );
+    }
+
+    getConvByDateAllPages() {
+        for(let i = 1; i <= this.pages; i++) {
+            this._helpscout.searchConvByDate(this.startDate, this.endDate, i)
+                .subscribe(
+                    data => {
+                        this.conversations = this.conversations.concat(data.items);
+                    },
+                    error => this.errorMessage = <any>error
+            );
+        }
     }
 
 

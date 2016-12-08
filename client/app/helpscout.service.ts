@@ -22,7 +22,7 @@ export class HelpscoutService {
 
     }
 
-    searchConversationsByDate (startDate: string, endDate: string, page?: number): Observable<any> {
+    searchConvByDate (startDate: string, endDate: string, page?: number): Observable<any> {
         startDate = new Date(startDate).toISOString();
         endDate = new Date(endDate).toISOString();
         let url = this._helpscoutUrl + 'search/conversations.json?query=(status:"closed"%20AND%20mailboxid:79656%20AND%20' +
