@@ -1,0 +1,28 @@
+<h1>HelpScout Invoice API</h1>
+<div class="container-fluid">
+    <div class="row">
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="startDate">Start Date</label>
+                <input type="date" name="startDate" id="startDate" [(ngModel)]="startDate" required>
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input type="date" name="endDate" id="endDate" [(ngModel)]="endDate" required>
+            </div>
+            <button type="submit" class="btn btn-default" (click)="runExpressTest(startDate, endDate)">Submit</button>
+        </form>
+    </div>
+    <p *ngIf="startDate && endDate">Query HelpScout conversations from {{startDate | date:"MM/dd/yyyy"}} to {{endDate | date:"MM/dd/yyyy"}}.</p>
+</div>
+<!--<div class="container-fluid" *ngIf="hsData">
+    <h2>Helpscout Data</h2>
+    <div>There are {{ hsData.pages }} pages of results and a total of {{ hsData.count }} tickets for your search.</div>
+    <ul>
+        <li *ngFor="let hs of hsData.items">#{{ hs.number }} - {{ hs.subject }}</li>
+    </ul>
+</div>-->
+
+<div *ngIf="responseJSON">
+    {{ responseJSON }}
+</div>
