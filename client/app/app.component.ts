@@ -13,10 +13,11 @@ export class AppComponent implements OnInit {
     startDate: string = this.date.getFullYear() + '-' + this.date.getMonth() + '-01';
     endDate: string = this.date.getFullYear() + '-' + (this.date.getMonth()+1) + '-01';
     errorMessage: string;
-    page: number
-    pages: number
-    count: number
+    page: number;
+    pages: number;
+    count: number;
     conversations: any[] = [];
+    threads: any[] = [];
 
 
     constructor(private _helpscout: HelpscoutService) { }
@@ -44,11 +45,21 @@ export class AppComponent implements OnInit {
         for(let i = 1; i <= this.pages; i++) {
             this._helpscout.searchConvByDate(this.startDate, this.endDate, i)
                 .subscribe(
-                    data => {
-                        this.conversations = this.conversations.concat(data.items);
-                    },
+                    data => this.conversations = this.conversations.concat(data.items),
                     error => this.errorMessage = <any>error
             );
+        }
+    }
+
+    getConvDetails() {
+        for (let conv of this.conversations) {
+            this._helpscout.searchThreadById(conv.id)
+                .subscribe(
+                    data => {
+                        this.threads.push(data);
+                    },
+                    error => this.errorMessage = <any>error
+                )
         }
     }
 

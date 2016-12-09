@@ -1,4 +1,8 @@
 <h1>HelpScout Invoice API</h1>
+<div class="container-fluid" *ngIf="errorMessage">
+    <h3>ERROR:</h3>
+    <p>{{errorMessage}}</p>
+</div>
 <div class="container-fluid">
     <div class="row">
         <form class="form-inline">
@@ -25,6 +29,14 @@
     <h3>Conversation IDs</h3>
     <ol>
         <li *ngFor="let c of conversations">#{{ c.number }}</li>
+    </ol>
+    <button type="submit" class="btn btn-default" (click)="getConvDetails()">Get Conversation Details</button>
+</div>
+
+<div class="container-fluid" *ngIf="threads.length > 0">
+    <h2>Conversation Details</h2>
+    <ol>
+        <li *ngFor="let thread of threads">Conversation #{{thread.item.number}} - {{ thread.item.subject }} has {{thread.item.threadCount}} threads.</li>
     </ol>
 </div>
 

@@ -4,6 +4,8 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/retryWhen';
+import 'rxjs/add/operator/delay';
 
 @Injectable()
 export class HelpscoutService {
@@ -34,12 +36,13 @@ export class HelpscoutService {
     }
 
     searchThreadById (id: number): Observable<any> {
-        let url = 'conversations/'+id+'.json';
+        let url = this._helpscoutUrl + 'conversations/'+id+'.json';
         return this.runSearch(url);
     }
 
     runSearch (url: string) {
         return this._http.get(url, this.options)
+            .retryWhen(error => error.delay(65000))
             .map((resp: Response) => resp.json())
             .catch(this.handleError)
     }
@@ -52,18 +55,18 @@ export class HelpscoutService {
     }
 
     private handleError (error: Response | any) {
-    // In a real world app, we might use a remote logging infrastructure
-    let errMsg: string;
-    if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
-    } else {
-      errMsg = error.message ? error.message : error.toString();
+        // In a real world app, we might use a remote logging infrastructure
+        let errMsg: string;
+        if (error instanceof Response) {
+            const body = error.json() || '';
+            const err = body.error || JSON.stringify(body);
+            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+        } else {
+            errMsg = error.message ? error.message : error.toString();
+        }
+        console.error(errMsg);
+        return Observable.throw(errMsg);
     }
-    console.error(errMsg);
-    return Observable.throw(errMsg);
-  }
 
 
 }
