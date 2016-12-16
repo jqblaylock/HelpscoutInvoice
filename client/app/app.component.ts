@@ -18,6 +18,8 @@ export class AppComponent implements OnInit {
     count: number;
     conversations: any[] = [];
     threads: any[] = [];
+    jobStatus: string;
+    showPostThreads: boolean = true;
 
 
     constructor(private _helpscout: HelpscoutService) { }
@@ -26,7 +28,21 @@ export class AppComponent implements OnInit {
         console.log(this.startDate.toString())
     }
 
+    reset() {
+        if(this.errorMessage){this.errorMessage = ''}
+        if(this.page){ this.page = 0};
+        if(this.pages){this.pages = 0};
+        if(this.count){this.count = 0};
+        if(this.conversations){this.conversations = []}
+        if(this.threads){this.threads = []}
+        if(this.jobStatus){this.jobStatus = ''}
+    }
+
     getConvByDate(startDate: string, endDate: string): void {
+        //Reset values
+        this.reset();
+
+        //Run Query
         this.startDate = startDate;
         this.endDate = endDate
         console.log('Get Helpscout conversations closed for the following dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
@@ -42,11 +58,18 @@ export class AppComponent implements OnInit {
     }
 
     getConvByDateAllPages() {
+        let counter = 0;
         for(let i = 1; i <= this.pages; i++) {
             this._helpscout.searchConvByDate(this.startDate, this.endDate, i)
                 .subscribe(
                     data => this.conversations = this.conversations.concat(data.items),
-                    error => this.errorMessage = <any>error
+                    error => this.errorMessage = <any>error,
+                    () => {
+                        counter++;
+                        if(counter === this.pages){
+                            this.getConvDetails();
+                        }
+                    }
             );
         }
     }
@@ -55,12 +78,19 @@ export class AppComponent implements OnInit {
         for (let conv of this.conversations) {
             this._helpscout.searchThreadById(conv.id)
                 .subscribe(
-                    data => {
-                        this.threads.push(data);
-                    },
+                    data => this.threads.push(data.item),
                     error => this.errorMessage = <any>error
                 )
         }
+    }
+
+    postThreads() {
+        this.showPostThreads = false;
+        this._helpscout.postThreads(this.threads)
+            .subscribe(
+                data => this.jobStatus = data,
+                error => this.errorMessage = <any>error
+            )
     }
 
 

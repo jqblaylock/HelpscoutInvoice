@@ -47,6 +47,13 @@ export class HelpscoutService {
             .catch(this.handleError)
     }
 
+    postThreads (threads: any[]) {
+        let url = '/helpscout/file'
+        return this._http.post(url,threads)
+            .map((resp: Response) => resp.text())
+            .catch(this.handleError)
+    }
+
     expressTest (dates: any) {
         let url = '/mailbox/test'
         return this._http.post(url,dates)

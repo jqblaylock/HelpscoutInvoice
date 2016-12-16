@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
-var run = require('../server/helpscout/run');
+var helpscout = require('../server/helpscout/helpscout');
 
+var hs = new helpscout();
 
-router.post('/test', function(req, res, next){
-   run(req.body.start, req.body.end, function(){
-       res.send('Run Complete');
-   });
+router.post('/file', function(req, res, next){
+    hs.threads = req.body;
+    hs.writeThreadsToFile();
+    res.send('Tickets Dropped to File');
 })
 
 module.exports = router;

@@ -19,12 +19,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client')));
 
 // Body Parser MW
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: false}));
 
 
 app.use('/', index);
-app.use('/mailbox', hsRoutes);
+app.use('/helpscout', hsRoutes);
 
 app.listen(port, function(){
     console.log('Server started on port ' + port);

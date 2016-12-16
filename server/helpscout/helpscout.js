@@ -6,10 +6,6 @@ var mysql = require('mysql');
  *
  */
 var Helpscout = function() {
-    this.hostname = 'api.helpscout.net';
-    this.apiKey = '838f6de2a34d17e1c430486b732e25a74a55bad5';
-    this.apiPass = 'X';
-    this.mailboxId = '79656';
 
     this.pool = mysql.createPool({
     //properties...
@@ -28,102 +24,6 @@ var Helpscout = function() {
         database: 'temporc7_tech'*/
     });
 }
-
-
-Helpscout.prototype.query = function(query, callback) {
-    var https = require('https');
-
-    var options = {
-        hostname: this.hostname,
-        path: query,
-        auth: this.apiKey + ':' + this.apiPass
-    };
-
-    var req = https.request(options, (res) => {
-        if(res.statusCode != '200'){
-            var wait = parseInt(res.headers["retry-after"]) + 3;
-            console.log('Retry After: ', wait.toString());
-        }else{
-            this.getQueryBody(res, function(body) {
-                callback({response: res, body: body});
-            });
-        }
-    });
-
-    req.end();
-
-    req.on('error', (e) => {
-      console.error('helpscout.query req ERROR:  ', e);
-    });
-};
-
-Helpscout.prototype.getQueryBody = function(res, callback) {
-    var body = [];
-    res.on('data', (d) => {
-        body.push(d);
-    });
-    res.on('end', (err) => {
-        body = Buffer.concat(body).toString();
-        body = JSON.parse(body)
-        callback(body);
-    });
-};
-
-Helpscout.prototype.getConversations = function(startDate, endDate, callback) {
-    var pages = 1;
-    var data = [];
-    var runQuery =  (page) => {
-        if(page <= pages){
-
-            var search = '/v1/search/conversations.json?query=(status:"closed"%20AND%20mailboxid:79656%20AND%20' +
-                         'modifiedAt:['+startDate+'%20TO%20'+endDate + '])&page='+page;
-
-            this.query(search, function(res) {
-                pages = res.body.pages;
-                data.push(res.body.items);
-
-/*                var countStart = 50*page-49;
-                var countEnd = 50*page;
-                if(countEnd > res.body.count) {
-                    countEnd = res.body.count
-                }
-                console.log('page ', page, ' of ', res.body.pages, '. Ticket ', countStart, '-', countEnd, ' of', res.body.count, '...');*/
-
-                page++;
-                runQuery(page);
-            });
-        }else{
-            this.conversations = [].concat.apply([], data);
-            callback();
-        }
-    }
-
-    runQuery(1);
-};
-
-Helpscout.prototype.getThread = function(conversationId, callback) {
-    var search = '/v1/conversations/'+conversationId+'.json';
-    this.query(search, function(res) {
-        callback(res.body.item);
-    });
-};
-
-Helpscout.prototype.getThreads = function(callback) {
-    var allThreads = [];
-    var runGetThread = (i) => {
-        if(i < this.conversations.length){
-            var item = this.conversations[i];
-            this.getThread(item.id, function(thread){
-                allThreads.push(thread);
-                runGetThread(i+1);
-            });
-        }else{
-            this.threads = allThreads;
-            callback();
-        }
-    }
-    runGetThread(0);
-};
 
 Helpscout.prototype.reformatTicketBody = function(ticket) {
     var striptags = require('striptags');
