@@ -43,6 +43,17 @@ Helpscout.prototype.reformatTicketBody = function(ticket) {
     return text.replace(/'/g, "''");
 };
 
+Helpscout.prototype.mysqlTestConnection = function(callback){
+    this.pool.getConnection(function(err, connection){
+        if(err){
+            console.log(err);
+            callback(err);
+        }else{
+            callback('Connected');
+        }
+    });
+}
+
 Helpscout.prototype.mysqlQuery = function(query, callback) {
     this.pool.getConnection(function(err, connection){
 

@@ -20,12 +20,14 @@ export class AppComponent implements OnInit {
     threads: any[] = [];
     jobStatus: string;
     showPostThreads: boolean = true;
+    dbConnStatus: string;
+    dbConnStatusType: string;
 
 
     constructor(private _helpscout: HelpscoutService) { }
 
     ngOnInit() {
-        console.log(this.startDate.toString())
+        this.checkDbConnection();
     }
 
     reset() {
@@ -46,7 +48,6 @@ export class AppComponent implements OnInit {
         this.startDate = startDate;
         this.endDate = endDate
         console.log('Get Helpscout conversations closed for the following dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
-        this.count = 0;
         this._helpscout.searchConvByDate(startDate, endDate)
             .subscribe(
                 data => {
@@ -75,34 +76,43 @@ export class AppComponent implements OnInit {
     }
 
     getConvDetails() {
+        let counter = 0;
         for (let conv of this.conversations) {
             this._helpscout.searchThreadById(conv.id)
                 .subscribe(
                     data => this.threads.push(data.item),
-                    error => this.errorMessage = <any>error
+                    error => this.errorMessage = <any>error,
+                    () => {
+                        counter++;
+                        if(counter === this.conversations.length){
+                            this.postThreadsToFile();
+                        }
+                    }
                 )
         }
     }
 
-    postThreads() {
+    postThreadsToFile() {
         this.showPostThreads = false;
-        this._helpscout.postThreads(this.threads)
+        this._helpscout.postThreadsToFile(this.threads)
             .subscribe(
                 data => this.jobStatus = data,
                 error => this.errorMessage = <any>error
             )
     }
 
-
-
-    // runExpressTest (startDate: string, endDate: string): void {
-    //     let startDateISO = new Date(startDate).toISOString();
-    //     let endDateISO = new Date(endDate).toISOString();
-
-    //     this._helpscout.expressTest({start: startDateISO, end: endDateISO})
-    //         .subscribe(
-    //             data => this.responseJSON = data
-    //         )
-    // }
-
+    checkDbConnection() {
+        this._helpscout.runCheckDbConnection()
+            .subscribe(
+                data => this.dbConnStatus = data,
+                error => this.errorMessage = <any>error,
+                () => {
+                    if(this.dbConnStatus === 'Connected') {
+                        this.dbConnStatusType = 'alert alert-success';
+                    }else{
+                        this.dbConnStatusType = 'alert alert-danger';
+                    }
+                }
+            )
+    }
 }

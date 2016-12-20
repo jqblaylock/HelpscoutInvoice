@@ -47,9 +47,16 @@ export class HelpscoutService {
             .catch(this.handleError)
     }
 
-    postThreads (threads: any[]) {
-        let url = '/helpscout/file'
+    postThreadsToFile (threads: any[]) {
+        let url = '/helpscout/file';
         return this._http.post(url,threads)
+            .map((resp: Response) => resp.text())
+            .catch(this.handleError)
+    }
+
+    runCheckDbConnection () {
+        let url = '/helpscout/dbConn';
+        return this._http.get(url)
             .map((resp: Response) => resp.text())
             .catch(this.handleError)
     }

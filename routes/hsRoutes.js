@@ -10,4 +10,15 @@ router.post('/file', function(req, res, next){
     res.send('Tickets Dropped to File');
 })
 
+router.get('/dbConn', function(req, res, next){
+    hs.mysqlTestConnection(function(cb){
+        if(cb === 'Connected'){
+            res.send(cb);
+        }else{
+            res.send(cb.code + ':  Error connecting to the os_ticket database.  Verify the source IP is whitelisted on BlueHost.');
+        }
+        //hs.mysqlClose();
+    });
+})
+
 module.exports = router;
