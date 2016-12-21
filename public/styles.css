@@ -6,3 +6,10 @@ header, h1 {
   margin-bottom: 0.5em;
 }
 
+div.row {
+  padding-bottom: 0.25em;
+}
+
+.alert {
+  white-space: normal;
+}

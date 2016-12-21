@@ -1,5 +1,6 @@
 var filewriter = require('./filewriter');
 var mysql = require('mysql');
+var config = require('../../server.config.json')
 
 /**
  * Helpscout constructor function
@@ -9,19 +10,11 @@ var Helpscout = function() {
 
     this.pool = mysql.createPool({
     //properties...
-        //Local Host
-        connectionLimit : 10,
-        host: 'localhost',
-        user: 'root',
-        password: 'PMT@mysql1',
-        database: 'helpscoutapi'
-
-        //Blue Host
-/*        connectionLimit : 5,
-        host: 'box867.bluehost.com',
-        user: 'temporc7_tech',
-        password: '1YeVF56r9aUg0QCLGdmF',
-        database: 'temporc7_tech'*/
+        connectionLimit : config.connectionLimit,
+        host: config.host,
+        user: config.user,
+        password: config.password,
+        database: config.database
     });
 }
 
@@ -47,10 +40,11 @@ Helpscout.prototype.mysqlTestConnection = function(callback){
     this.pool.getConnection(function(err, connection){
         if(err){
             console.log(err);
-            callback(err);
+            callback(err.message);
         }else{
             callback('Connected');
         }
+        connection.release();
     });
 }
 
@@ -76,7 +70,7 @@ Helpscout.prototype.mysqlClose = function() {
         if(err) {
             console.log('pool.end error:', err);
         }else{
-            console.log('pool.end successful');
+            console.log('Database connection closed.');
         }
     });
 }

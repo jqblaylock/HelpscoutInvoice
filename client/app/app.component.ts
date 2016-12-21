@@ -85,7 +85,8 @@ export class AppComponent implements OnInit {
                     () => {
                         counter++;
                         if(counter === this.conversations.length){
-                            this.postThreadsToFile();
+                            //this.postThreadsToFile();
+                            this.postThreadsToMysql();
                         }
                     }
                 )
@@ -101,10 +102,27 @@ export class AppComponent implements OnInit {
             )
     }
 
+    postThreadsToMysql() {
+        this.showPostThreads = false;
+        this._helpscout.postThreadsToMysql(this.threads)
+            .subscribe(
+                data => this.jobStatus = data,
+                error => this.errorMessage = <any>error
+            )
+    }
+
     checkDbConnection() {
+        this.dbConnStatus = '';
+        this.dbConnStatusType = '';
         this._helpscout.runCheckDbConnection()
             .subscribe(
-                data => this.dbConnStatus = data,
+                data => {
+                    if(data === 'Connected'){
+                        this.dbConnStatus = data;
+                    }else{
+                        this.dbConnStatus = 'Error connecting to the os_ticket database. Verify the source IP is whitelisted on BlueHost.   DETAILS:' + data;
+                    }
+                },
                 error => this.errorMessage = <any>error,
                 () => {
                     if(this.dbConnStatus === 'Connected') {

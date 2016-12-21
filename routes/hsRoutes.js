@@ -4,19 +4,27 @@ var helpscout = require('../server/helpscout/helpscout');
 
 var hs = new helpscout();
 
+//Write threads to File.
 router.post('/file', function(req, res, next){
     hs.threads = req.body;
     hs.writeThreadsToFile();
     res.send('Tickets Dropped to File');
 })
 
+//Write threads to MySQL.
+router.post('/mysql', function(req, res, next){
+    hs.threads = req.body;
+    hs.insertTickets(function(){
+        res.send('Tickets written to database.');
+        hs.mysqlClose();
+    });
+
+})
+
+//Check DB Connection
 router.get('/dbConn', function(req, res, next){
     hs.mysqlTestConnection(function(cb){
-        if(cb === 'Connected'){
-            res.send(cb);
-        }else{
-            res.send(cb.code + ':  Error connecting to the os_ticket database.  Verify the source IP is whitelisted on BlueHost.');
-        }
+        res.send(cb);
         //hs.mysqlClose();
     });
 })

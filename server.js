@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var hsRoutes = require('./routes/hsRoutes');
+var config = require('./routes/config');
 
 var port = 3000;
 
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use('/', index);
 app.use('/helpscout', hsRoutes);
+app.use('/config', config);
 
 app.listen(port, function(){
     console.log('Server started on port ' + port);
