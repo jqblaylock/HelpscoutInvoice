@@ -63,34 +63,6 @@ export class HelpscoutService {
             .catch(this.handleError)
     }
 
-    postThreadsToFile (threads: any[]) {
-        let url = '/helpscout/file';
-        return this._http.post(url,threads)
-            .map((resp: Response) => resp.text())
-            .catch(this.handleError)
-    }
-
-    postThreadsToMysql (threads: any[]) {
-        let url = '/helpscout/mysql';
-        return this._http.post(url,threads)
-            .map((resp: Response) => resp.text())
-            .catch(this.handleError)
-    }
-
-    runCheckDbConnection () {
-        let url = '/helpscout/dbConn';
-        return this._http.get(url)
-            .map((resp: Response) => resp.text())
-            .catch(this.handleError)
-    }
-
-    expressTest (dates: any) {
-        let url = '/mailbox/test'
-        return this._http.post(url,dates)
-            .map((resp: Response) => resp.text())
-            .catch(this.handleError)
-    }
-
     private handleError (error: Response | any) {
         // In a real world app, we might use a remote logging infrastructure
         //console.error('handleError:  ' + error);

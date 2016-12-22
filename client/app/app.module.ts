@@ -6,7 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 //import { AppRoutingModule } from './app.routing'; //TODO: Create app.routing
 
-import { HelpscoutService } from'./helpscout.service';
+import { HelpscoutService } from './helpscout.service';
+import { MysqlService } from './mysql.service';
 
 @NgModule({
   imports: [
@@ -17,7 +18,7 @@ import { HelpscoutService } from'./helpscout.service';
  //   AppRoutingModule,
   ],
   declarations: [AppComponent],
-  providers: [HelpscoutService],
+  providers: [HelpscoutService, MysqlService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

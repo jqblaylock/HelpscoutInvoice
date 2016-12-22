@@ -41,6 +41,14 @@
     </form>
 
 
+    <div *ngIf="count === 0">
+        <div class="row">
+            <div class="col-sm-12">
+                <p class="lead">The search returned {{ count }} results.  Please try another date range.</p>
+            </div>
+        </div>
+    </div>
+
     <div *ngIf="count && pages">
         <div class="row">
             <div class="col-sm-12">

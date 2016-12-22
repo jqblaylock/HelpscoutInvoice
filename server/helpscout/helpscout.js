@@ -8,14 +8,15 @@ var config = require('../../server.config.json')
  */
 var Helpscout = function() {
 
-    this.pool = mysql.createPool({
+    this.poolOptions = {
     //properties...
         connectionLimit : config.connectionLimit,
         host: config.host,
         user: config.user,
         password: config.password,
         database: config.database
-    });
+    }
+    this.poolOpen = false;
 }
 
 Helpscout.prototype.reformatTicketBody = function(ticket) {
@@ -36,19 +37,45 @@ Helpscout.prototype.reformatTicketBody = function(ticket) {
     return text.replace(/'/g, "''");
 };
 
+Helpscout.prototype.mysqlOpen = function() {
+    this.pool = mysql.createPool(this.poolOptions)
+    this.poolOpen = true;
+}
+
+Helpscout.prototype.mysqlClose = function() {
+    this.pool.end( err => {
+        if(err) {
+            console.log('pool.end error:', err);
+        }else{
+            console.log('Database connection closed.');
+            this.poolOpen = false;
+        }
+    });
+}
+
 Helpscout.prototype.mysqlTestConnection = function(callback){
+    if(!this.poolOpen){
+        this.mysqlOpen();
+    }
     this.pool.getConnection(function(err, connection){
         if(err){
             console.log(err);
-            callback(err.message);
+            callback({
+                message: err.message,
+                error: err
+            })
         }else{
+            connection.release();
             callback('Connected');
         }
-        connection.release();
+
     });
 }
 
 Helpscout.prototype.mysqlQuery = function(query, callback) {
+    if(!this.poolOpen){
+        this.mysqlOpen();
+    }
     this.pool.getConnection(function(err, connection){
 
         connection.query(query, function(err, rows){
@@ -56,24 +83,12 @@ Helpscout.prototype.mysqlQuery = function(query, callback) {
                 console.log('QUERY ERROR:\n', 'Query: ', query, '\nError: ', err, '\n');
                 callback(err);
             }else{
+                connection.release();
                 callback(rows);
             }
         });
-        connection.release();
-        //console.log('Connection Released');
     });
 };
-
-Helpscout.prototype.mysqlClose = function() {
-    console.log('End Pool');
-    this.pool.end(function(err) {
-        if(err) {
-            console.log('pool.end error:', err);
-        }else{
-            console.log('Database connection closed.');
-        }
-    });
-}
 
 Helpscout.prototype.insertTicket = function(ticket, callback) {
     var query;

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { HelpscoutService } from './helpscout.service';
+import { MysqlService } from './mysql.service';
 import { Observable } from 'rxjs/Rx';
 
 @Component({
@@ -24,17 +25,17 @@ export class AppComponent implements OnInit {
     dbConnStatusType: string;
 
 
-    constructor(private _helpscout: HelpscoutService) { }
+    constructor(private _helpscout: HelpscoutService, private _mysql: MysqlService) { }
 
     ngOnInit() {
-        this.checkDbConnection();
+
     }
 
     reset() {
         if(this.errorMessage){this.errorMessage = ''}
         if(this.page){ this.page = 0};
         if(this.pages){this.pages = 0};
-        if(this.count){this.count = 0};
+        if(this.count){this.count = undefined};
         if(this.conversations){this.conversations = []}
         if(this.threads){this.threads = []}
         if(this.jobStatus){this.jobStatus = ''}
@@ -54,7 +55,13 @@ export class AppComponent implements OnInit {
                     this.count = data.count;
                     this.pages = data.pages;
                 },
-                error => this.errorMessage = <any>error
+                error => this.errorMessage = <any>error,
+                () => {
+                    if(this.count < 1){
+                        this.count = 0;
+                    }
+                    this.checkDbConnection();
+                }
         );
     }
 
@@ -95,7 +102,7 @@ export class AppComponent implements OnInit {
 
     postThreadsToFile() {
         this.showPostThreads = false;
-        this._helpscout.postThreadsToFile(this.threads)
+        this._mysql.postThreadsToFile(this.threads)
             .subscribe(
                 data => this.jobStatus = data,
                 error => this.errorMessage = <any>error
@@ -104,7 +111,7 @@ export class AppComponent implements OnInit {
 
     postThreadsToMysql() {
         this.showPostThreads = false;
-        this._helpscout.postThreadsToMysql(this.threads)
+        this._mysql.postThreadsToMysql(this.threads)
             .subscribe(
                 data => this.jobStatus = data,
                 error => this.errorMessage = <any>error
@@ -114,13 +121,20 @@ export class AppComponent implements OnInit {
     checkDbConnection() {
         this.dbConnStatus = '';
         this.dbConnStatusType = '';
-        this._helpscout.runCheckDbConnection()
+        this._mysql.runCheckDbConnection()
             .subscribe(
                 data => {
                     if(data === 'Connected'){
                         this.dbConnStatus = data;
                     }else{
-                        this.dbConnStatus = 'Error connecting to the os_ticket database. Verify the source IP is whitelisted on BlueHost.   DETAILS:' + data;
+                        let err = JSON.parse(data);
+                        if(err.error.code === 'POOL_CLOSED'){
+                            this.dbConnStatus = 'The connection to the database was closed. Please restart the server and try again.'
+                        }else{
+                            this.dbConnStatus = 'Error connecting to the os_ticket database. Verify the source IP is whitelisted on BlueHost.';
+                        }
+                        this.dbConnStatus += '   DETAILS:' + err.message;
+
                     }
                 },
                 error => this.errorMessage = <any>error,
