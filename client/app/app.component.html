@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <span class="help-block" *ngIf="startDate && endDate">Query HelpScout conversations closed between {{startDate | date:"MM/dd/yyyy"}} and {{endDate | date:"MM/dd/yyyy"}} (not including end date).</span>
             </div>
         </div>
@@ -54,21 +54,21 @@
             The search returned <strong>{{ count }}</strong> results.
         </div>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-md-12">
                 <div [class]="dbConnStatusType" role="alert">
                     <strong>DB Connection Status:</strong>  {{ dbConnStatus }}
                 </div>
             </div>
         </div>
         <div *ngIf="dbConnStatus !== 'Connected'" class="row">
-            <div class="col-sm-12">
+            <div class="col-md-12">
                 <button class="btn btn-danger" (click)="checkDbConnection()">
                     Retry Connection
                 </button>
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-12">
+            <div class="col-md-12">
                 <button type="submit" class="btn btn-primary"
                     [disabled]="(threads.length > 0 && threads.length < count) || dbConnStatus !== 'Connected'"
                     (click)="getConvByDateAllPages()">
