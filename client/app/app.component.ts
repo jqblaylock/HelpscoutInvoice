@@ -23,6 +23,8 @@ export class AppComponent implements OnInit {
     showPostThreads: boolean = true;
     dbConnStatus: string;
     dbConnStatusType: string;
+    searchStarted: boolean;
+    processingResults: boolean;
 
 
     constructor(private _helpscout: HelpscoutService, private _mysql: MysqlService) { }
@@ -39,13 +41,18 @@ export class AppComponent implements OnInit {
         if(this.conversations){this.conversations = []}
         if(this.threads){this.threads = []}
         if(this.jobStatus){this.jobStatus = ''}
+        if(this.searchStarted){this.searchStarted = false}
+        if(this.processingResults){this.processingResults = false}
     }
 
     getConvByDate(startDate: string, endDate: string): void {
-        //Reset values
+        // Reset values
         this.reset();
 
-        //Run Query
+        // Start Search
+        this.searchStarted = true;
+
+        // Run Query
         this.startDate = startDate;
         this.endDate = endDate
         console.log('Get Helpscout conversations closed for the following dates:\nStart Date: ' + startDate + '\nEnd Date: ' + endDate);
@@ -66,6 +73,7 @@ export class AppComponent implements OnInit {
     }
 
     getConvByDateAllPages() {
+        this.processingResults = true;
         let counter = 0;
         for(let i = 1; i <= this.pages; i++) {
             this._helpscout.searchConvByDate(this.startDate, this.endDate, i)

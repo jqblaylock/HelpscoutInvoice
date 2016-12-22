@@ -108,7 +108,6 @@ Helpscout.prototype.insertTicket = function(ticket, callback) {
         clientId = 0;
     }
     if(!billableHours){
-        //console.log('NO HOURS INPUT: ', ticket.number);
         billableHours = 0;
     }
     query = "call helpscoutInsert("+
@@ -133,7 +132,7 @@ Helpscout.prototype.insertTickets = function(callback) {
     var counter = this.threads.length;
     this.threads.forEach(function(ticket) {
         this.insertTicket(ticket, function(rows){
-            console.log(rows);
+            //console.log(rows);
             counter--;
             if(counter === 0) {
                 callback();
