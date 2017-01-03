@@ -142,25 +142,7 @@ Helpscout.prototype.insertTickets = function(callback) {
 };
 
 Helpscout.prototype.clientMap = function(clientId){
-    var client = {
-        '5718': 'POPLAR HEALTHCARE MGMT',
-        '5719': 'PUGET SOUND INSTITUTE OF PATHOLOGY',
-        '5720': 'BAKO PATHOLOGY',
-        '5721': 'PATHOLOGY ASSOCIATES-FRESNO',
-        '5727': 'CELLNETIX',
-        '5723': 'NYU',
-        '7973': 'NYU DERM',
-        '7974': 'NYU RESEARCH',
-        '5724': 'CENTRAL OREGON PATHOLOGY CONSULTANTS',
-        '5725': 'BIO-PATH MEDICAL GROUP',
-        '5722': 'ABCODIA',
-        '5726': 'INCYTE',
-        '5728': 'OHSU',
-        '5729': 'DAHL-CHASE DIAGNOSTIC SERVICES',
-        '7975': 'STANFORD HOSPITAL & CLINICS',
-        '7976': 'UCLA DEPARTMENT OF PATHOLOGY',
-        '7977': 'UW DEPARTMENT OF PATHOLOGY'
-    }
+    var client = config.clientMap;
     if(client[clientId]){
         return client[clientId];
     }else{
