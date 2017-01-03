@@ -11,8 +11,8 @@ import { Observable } from 'rxjs/Rx';
 })
 export class AppComponent implements OnInit {
     date = new Date();
-    startDate: string = this.date.getFullYear() + '-' + this.date.getMonth() + '-01';
-    endDate: string = this.date.getFullYear() + '-' + (this.date.getMonth()+1) + '-01';
+    startDate: string;
+    endDate: string;
     errorMessage: string;
     page: number;
     pages: number;
@@ -30,7 +30,8 @@ export class AppComponent implements OnInit {
     constructor(private _helpscout: HelpscoutService, private _mysql: MysqlService) { }
 
     ngOnInit() {
-
+        this.startDate = this.date.getFullYear() + '-' + this.date.getMonth() + '-01';
+        this.endDate = this.date.getFullYear() + '-' + (this.date.getMonth()+1) + '-01';
     }
 
     reset() {

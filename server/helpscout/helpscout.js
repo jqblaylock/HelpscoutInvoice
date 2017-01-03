@@ -112,8 +112,8 @@ Helpscout.prototype.insertTicket = function(ticket, callback) {
     }
     query = "call helpscoutInsert("+
         ticket.number+",'"+
-        //ticket.closedAt.replace(/T|Z/g, ' ')+"','"+
-        "1905-01-01', '" +
+        ticket.closedAt.replace(/T|Z/g, ' ')+"','"+
+        //"1905-01-01', '" +
         ticket.closedBy.firstName+"','"+
         ticket.closedBy.lastName+"','"+
         this.clientMap(clientId)+"','"+

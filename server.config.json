@@ -1,8 +1,8 @@
 {
-    "connectionLimit" : 10,
-    "host": "localhost",
-    "user": "root",
-    "password": "PMT@mysql1",
-    "database": "helpscoutapi"
+    "connectionLimit" : 5,
+    "host": "box867.bluehost.com",
+    "user": "temporc7_tech",
+    "password": "1YeVF56r9aUg0QCLGdmF",
+    "database": "temporc7_tech"
 }
 
