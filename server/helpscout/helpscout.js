@@ -80,6 +80,7 @@ Helpscout.prototype.mysqlQuery = function(query, callback) {
 
         connection.query(query, function(err, rows){
             if(!!err){
+                console.log('------------------\n' + query + '-------------------\n')
                 console.log('QUERY ERROR:\n', 'Query: ', query, '\nError: ', err, '\n');
                 callback(err);
             }else{
@@ -110,6 +111,7 @@ Helpscout.prototype.insertTicket = function(ticket, callback) {
     if(!billableHours){
         billableHours = 0;
     }
+    console.log(ticket.number)
     query = "call helpscoutInsert("+
         ticket.number+",'"+
         ticket.closedAt.replace(/T|Z/g, ' ')+"','"+
